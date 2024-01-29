@@ -1,0 +1,46 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Lints & formats Code.
+npx lint-staged
+
+echo 'Running Pre Commit Hooks 🪝\n'
+
+echo '\n Checking Styling against Prettier Standards 💅🏽'
+
+# Check Prettier standards
+npm run check-format ||
+(
+    echo 'ERROR: ❌
+            Prettier Check Failed. Run npm run format, fix changes try to commit again.';
+    false;
+)
+
+# Check ESLint Standards
+npm run check-lint ||
+(
+        echo 'ERROR: ❌ 
+                ESLint Check Failed. Make the required changes listed above, add changes and try to commit again.'
+        false; 
+)
+
+# Check tsconfig standards
+npm run check-types ||
+(
+    echo 'ERROR: ❌
+            Are you seriously trying to write that? Make the changes required above.'
+    false;
+)
+
+# If everything passes... Now we can commit
+echo 'Coding standards met 👍🏾. Building Project...'
+
+npm run build ||
+(
+    echo 'ERROR: ❌
+            Next build failed: View the errors above to see why.'
+    false;
+)
+
+# If everything passes... Now we can commit
+echo 'All checks passed. Committing Code: ✅'
